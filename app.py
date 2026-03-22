@@ -1,6 +1,5 @@
 from flask import *
 import speech_recognition as sr
-import pyttsx3
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
 from gtts import gTTS 
@@ -32,8 +31,6 @@ ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "1234"
 
 recognizer = sr.Recognizer()
-tts_engine = pyttsx3.init()
-
 def generate_account_number():
     while True:
         account_no = "ABC" + str(random.randint(10000000, 99999999))
