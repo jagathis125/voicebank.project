@@ -1,0 +1,9 @@
+venv/
+.venv/
+.vscode/
+instance/
+*.db
+*.sql
+*.exe
+*.wav
+__pycache__/
