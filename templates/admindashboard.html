@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 10px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .view-btn {
+            background-color: #00e5ff;
+            color: black;
+        }
+
+        .logout-btn {
+            background-color: red;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Admin Dashboard</h2>
+
+    <!-- View Users Button -->
+    <a href="{{ url_for('adminuser') }}">
+        <button class="view-btn">View Users</button>
+    </a>
+
+    <br>
+
+    <!-- Logout Button -->
+    <a href="{{ url_for('index') }}">
+        <button class="logout-btn">Logout</button>
+    </a>
+    
+<a href="{{ url_for('adduser') }}">
+    <button style="background-color:green; color:white;">Add New User</button>
+</a>
+
+</div>
+
+</body>
+</html>

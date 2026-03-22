@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voice OTP Verification</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+.card h2 {
+    margin-bottom: 20px;
+    color: #2c5364;
+}
+
+.timer {
+    font-size: 14px;
+    color: red;
+    margin-bottom: 15px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 15px;
+    letter-spacing: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 25px;
+    border: none;
+    background: #2c5364;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #203a43;
+}
+
+#resendBtn {
+    margin-top: 10px;
+    background: none;
+    color: blue;
+    font-size: 14px;
+}
+
+#resendBtn:disabled {
+    color: gray;
+    cursor: not-allowed;
+}
+
+.success {
+    display: none;
+    margin-top: 20px;
+    color: green;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Voice OTP Verification</h2>
+
+    <div class="timer">
+        OTP expires in <span id="countdown">60</span> seconds
+    </div>
+
+    <form id="otpForm">
+        <input type="text" id="otpInput" name="otp"
+               maxlength="6"
+               placeholder="Enter 6-digit OTP"
+               required>
+        <button type="submit">Verify OTP</button>
+    </form>
+
+    <button id="resendBtn" disabled>Resend OTP</button>
+
+    <div class="success" id="successMsg">
+        ✔ Payment Successful
+    </div>
+</div>
+
+<script>
+
+/* Auto Focus */
+window.onload = function() {
+    document.getElementById("otpInput").focus();
+    startTimer();
+};
+
+/* Countdown Timer */
+let timeLeft = 60;
+let countdown = document.getElementById("countdown");
+let resendBtn = document.getElementById("resendBtn");
+
+function startTimer() {
+
+    resendBtn.disabled = true;
+    timeLeft = 60;
+    countdown.innerText = timeLeft;
+
+    let timer = setInterval(function() {
+
+        timeLeft--;
+        countdown.innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            resendBtn.disabled = false;
+        }
+
+    }, 1000);
+}
+
+/* Resend */
+resendBtn.addEventListener("click", function() {
+
+    fetch("/resend_voice_otp")
+    .then(res => res.json())
+    .then(data => {
+        alert("OTP Resent");
+        startTimer();
+    });
+
+});
+
+</script>
+
+</body>
+</html>

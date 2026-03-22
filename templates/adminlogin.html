@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+        }
+
+        .login-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 25px rgba(0,0,0,0.4);
+            width: 350px;
+            text-align: center;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            margin: 10px 0;
+            border-radius: 25px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 25px;
+            border: none;
+            background: #00e5ff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00bcd4;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            background: transparent;
+            border: 2px solid #00e5ff;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #00e5ff;
+            color: black;
+        }
+        .eye-icon{
+            color: black;
+            size: 10vh;
+            font-size: 18px;
+        }
+    </style>
+
+    <script>
+        function togglePassword() {
+            let input = document.getElementById("password");
+            input.type = input.type === "password" ? "text" : "password";
+        }
+    </script>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <a href="{{ url_for('index') }}" class="back-btn">
+        ← Back
+    </a>
+
+    <h2>Admin Login</h2>
+
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+
+        <div class="password-wrapper">
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <span class="eye-icon" onclick="togglePassword()">👁</span>
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+
+</div>
+
+</body>
+</html>

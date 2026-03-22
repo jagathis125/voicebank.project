@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - User List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: rgb(0, 255, 234);
+            text-align: center;
+        }
+
+        .container {
+            width: 85%;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 250px;
+            border-radius: 20px;
+            border: none;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .table-container {
+            max-height: 350px;
+            font-size: large;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgb(3, 255, 242);
+            color: black;
+        }
+
+        th {
+            background: #1e3c72;
+            color: rgb(166, 255, 0);
+            padding: 10px;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #a8fcff;
+        }
+
+        tr:hover {
+            background-color: orange;
+        }
+
+        button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .eye{
+            background: none;
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+        }
+
+        .edit-btn { 
+        
+         background: none;
+    color: rgb(0, 0, 0);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+        }
+        .delete-btn {
+    background: none;
+    color: rgb(0, 0, 0);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    color: aqua;  /* only text color changes */
+}
+
+.eye:hover {
+    color: aqua;   /* only text color changes */
+}
+
+.edit-btn:hover {
+    color: aqua;   /* only text color changes */
+}
+
+ 
+
+        .back-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #00e5ff;
+            border-radius: 20px;
+        }
+    </style>
+
+    <script>
+        function searchUser() {
+            let input = document.getElementById("search").value.toLowerCase();
+            let rows = document.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            });
+        }
+
+       function togglePassword(btn) {
+    let row = btn.closest("tr");
+    let td = row.querySelector(".password-cell");
+
+    if (td.innerText === "******") {
+        td.innerText = td.dataset.password;
+    } else {
+        td.innerText = "******";
+    }
+        }
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Registered Users</h2>
+
+    🔍 <input type="text" id="search" onkeyup="searchUser()" placeholder="Search user...">
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Mobile</th>
+                    <th>Password</th>
+                    <th>Balance</th>
+                    <th>Account No</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user[0] }}</td>
+                    <td>{{ user[1] }}</td>
+
+                 <td class="password-cell" data-password="{{ user[2] }}">******</td>
+                
+
+                    <td>{{ user[3] }}</td>
+                    <td>{{ user[4] }}</td>
+
+
+                    <td> <button class="eye" onclick="togglePassword(this)"><i class="fa fa-eye"></i></button>
+                       
+                        <a href="{{ url_for('edituser', mobile=user[1]) }}">
+                            <button class="edit-btn"><i class="fa fa-edit"></i></button>
+                        </a>
+
+                        <a href="{{ url_for('deleteuser', mobile=user[1]) }}"
+                           onclick="return confirm('Delete this user?')">
+                            <button class="delete-btn"><i class="fa fa-trash"></i></button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <br>
+
+    <a href="{{ url_for('admindashboard') }}">
+        <button class="back-btn">Back to Dashboard</button>
+    </a>
+
+</div>
+
+</body>
+</html>

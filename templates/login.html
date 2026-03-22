@@ -1,0 +1,58 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
+  <div class="card p-5" style="backdrop-filter:blur(15px); border-radius:20px; max-width:400px; width:100%; background:rgba(255,255,255,0.15);">
+    <h3 class="text-center mb-4" id="loginTitle">🔐 ABC Bank Login</h3>
+    {% if error %}
+      <div style="color:red; text-align:center; margin-bottom:10px;">{{ error }}</div>
+    {% endif %}
+    <form action="{{ url_for('logincheck') }}" method="POST">
+      <label id="mobileLabel">Phone Number</label>
+     <div class="input-group mb-3">
+  <span class="input-group-text">+91</span>
+  
+  <input 
+      type="tel" 
+      class="form-control" 
+      name="mobile" 
+      placeholder="Enter 10 digit number"
+      maxlength="10"
+      pattern="[0-9]{10}"
+      required>
+</div>
+     <label id="passLabel">Password</label>
+
+<div class="input-group mb-3">
+  <input 
+    type="password" 
+    class="form-control" 
+    name="password" 
+    id="passwordField"
+    placeholder="Enter Password" 
+    required>
+
+  <span class="input-group-text" 
+        style="cursor:pointer;" 
+        onclick="togglePassword()">
+    👁️
+  </span>
+</div>
+
+      <button type="submit" class="btn btn-primary w-100 mt-2" id="loginBtn">Login</button>
+    </form>
+  </div>
+</div>
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById("passwordField");
+
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+    } else {
+        passwordField.type = "password";
+    }
+}
+</script>
+
+{% endblock %}

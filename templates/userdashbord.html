@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Voice Banking</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        }
+
+        .voice-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            color: white;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .lang-btn {
+            margin: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .voice-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .voice-btn:hover { transform: scale(1.1); }
+        .voice-btn:active { transform: scale(0.95); }
+
+        #response {
+            margin-top: 25px;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            min-height: 40px;
+        }
+
+        .listening {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0,198,255,0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(0,198,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,198,255,0); }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="voice-container">
+
+    <div>
+        <button class="lang-btn" onclick="setLanguage('ta')">தமிழ்</button>
+        <button class="lang-btn" onclick="setLanguage('en')">English</button>
+    </div>
+
+    <h1 id="title">🎤 Voice Banking</h1>
+
+    <button id="voiceBtn" class="voice-btn" onclick="startVoiceCommand()">
+        <span id="speakText">Speak</span>
+    </button>
+
+    <p id="response">
+        <span id="responseLabel">Response:</span>
+        <span id="responseText">Waiting...</span>
+    </p>
+
+</div>
+
+<script>
+
+let currentLang = "en";
+
+function setLanguage(lang) {
+    currentLang = lang;
+
+    if (lang === "ta") {
+        document.getElementById("title").innerText = "🎤 குரல் வங்கி சேவை";
+        document.getElementById("speakText").innerText = "பேசவும்";
+        document.getElementById("responseLabel").innerText = "பதில்:";
+        document.getElementById("responseText").innerText = "காத்திருக்கிறது...";
+    } else {
+        document.getElementById("title").innerText = "🎤 Voice Banking";
+        document.getElementById("speakText").innerText = "Speak";
+        document.getElementById("responseLabel").innerText = "Response:";
+        document.getElementById("responseText").innerText = "Waiting...";
+    }
+}
+
+function startVoiceCommand() {
+
+    const btn = document.getElementById('voiceBtn');
+    const responseText = document.getElementById('responseText');
+
+    btn.classList.add('listening');
+    responseText.innerText = currentLang === "ta" ? "கேட்கிறது..." : "Listening...";
+
+    fetch('/voice_command', { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+
+        btn.classList.remove('listening');
+
+        if (data.response_text) {
+            responseText.innerText = data.response_text;
+            localStorage.setItem('responseText', data.response_text);
+        } else if (data.error) {
+            responseText.innerText = data.error;
+        }
+    })
+    .catch(error => {
+        btn.classList.remove('listening');
+        responseText.innerText = "Error occurred";
+    });
+}
+
+</script>
+
+</body>
+</html>

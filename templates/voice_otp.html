@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Voice OTP Verification</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    width: 360px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 10px;
+    color: #2a5298;
+}
+
+.timer {
+    font-size: 14px;
+    color: red;
+    margin-bottom: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 5px;
+    margin-bottom: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 25px;
+    border: none;
+    background: #2a5298;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #1e3c72;
+}
+
+#resendBtn {
+    background: none;
+    color: blue;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+#resendBtn:disabled {
+    color: gray;
+    cursor: not-allowed;
+}
+
+/* SUCCESS SECTION */
+.success {
+    display: none;
+    margin-top: 20px;
+}
+
+.checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 5px solid green;
+    margin: auto;
+    position: relative;
+    animation: pop 0.4s ease;
+}
+
+.checkmark::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 35px;
+    width: 15px;
+    height: 30px;
+    border-right: 5px solid green;
+    border-bottom: 5px solid green;
+    transform: rotate(45deg);
+}
+
+@keyframes pop {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2 id="otpTitle"></h2>
+
+<div class="timer">
+<span id="expireText"></span>
+<span id="countdown">60</span>
+<span id="secondsText"></span>
+</div>
+
+<form id="otpForm">
+<input type="text" id="otpInput" maxlength="6" required>
+<button type="submit" id="verifyBtn"></button>
+</form>
+
+<button id="resendBtn" disabled></button>
+
+<div class="success" id="successAnim">
+<div class="checkmark"></div>
+<p id="successMessage"></p>
+<p id="redirectText"></p>
+</div>
+
+</div>
+
+<script>
+
+/* LANGUAGE APPLY */
+let currentLang = localStorage.getItem("lang") || "en";
+
+function applyLanguage() {
+
+    if (currentLang === "ta") {
+
+        document.getElementById("otpTitle").innerText = "ஒடிபி சரிபார்ப்பு";
+        document.getElementById("expireText").innerText = "OTP முடிவடையும் நேரம்: ";
+        document.getElementById("secondsText").innerText = " விநாடிகள்";
+        document.getElementById("otpInput").placeholder = "6 இலக்க OTP உள்ளிடவும்";
+        document.getElementById("verifyBtn").innerText = "சரிபார்";
+        document.getElementById("resendBtn").innerText = "மீண்டும் அனுப்பு";
+        document.getElementById("successMessage").innerText = "OTP வெற்றிகரமாக சரிபார்க்கப்பட்டது!";
+        document.getElementById("redirectText").innerText = "3 விநாடிகளில் முகப்பு பக்கத்திற்கு செல்கிறது...";
+
+    } else {
+
+        document.getElementById("otpTitle").innerText = "Voice OTP Verification";
+        document.getElementById("expireText").innerText = "OTP expires in ";
+        document.getElementById("secondsText").innerText = " seconds";
+        document.getElementById("otpInput").placeholder = "Enter 6-digit OTP";
+        document.getElementById("verifyBtn").innerText = "Verify OTP";
+        document.getElementById("resendBtn").innerText = "Resend OTP";
+        document.getElementById("successMessage").innerText = "OTP Verified Successfully!";
+        document.getElementById("redirectText").innerText = "Redirecting to home in 3 seconds...";
+    }
+}
+
+/* Auto Focus + Language */
+window.onload = function() {
+    applyLanguage();
+    document.getElementById("otpInput").focus();
+    startTimer();
+};
+
+/* Countdown Timer */
+let timeLeft = 60;
+let resendBtn = document.getElementById("resendBtn");
+let countdown = document.getElementById("countdown");
+let timer;
+
+function startTimer() {
+
+    resendBtn.disabled = true;
+    timeLeft = 60;
+    countdown.innerText = timeLeft;
+
+    timer = setInterval(function() {
+
+        timeLeft--;
+        countdown.innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            resendBtn.disabled = false;
+        }
+
+    }, 1000);
+}
+
+/* Verify OTP */
+document.getElementById("otpForm").addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    let otpValue = document.getElementById("otpInput").value;
+
+    fetch("/verify_voice_otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otp: otpValue })
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        if (data.status === "success") {
+
+            document.getElementById("otpForm").style.display = "none";
+            resendBtn.style.display = "none";
+            document.querySelector(".timer").style.display = "none";
+            document.getElementById("successAnim").style.display = "block";
+
+            setTimeout(function() {
+                window.location.href = "/home";
+            }, 3000);
+
+        } else {
+            alert(currentLang === "ta" ? "தவறான OTP" : "Invalid OTP");
+        }
+
+    });
+
+});
+
+/* Resend OTP */
+resendBtn.addEventListener("click", function() {
+
+    fetch("/resend_voice_otp")
+    .then(response => response.json())
+    .then(data => {
+        alert(currentLang === "ta" ? "OTP மீண்டும் அனுப்பப்பட்டது" : "OTP Resent");
+        startTimer();
+    });
+
+});
+
+</script>
+</body>
+</html>
