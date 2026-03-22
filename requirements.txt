@@ -12,11 +12,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
 pvorca==1.0.0
-PyAudio==0.2.14
 PyMySQL==1.1.1
-pypiwin32==223
-pyttsx3==2.98
-pywin32==306
 requests==2.32.3
 setuptools==75.1.0
 SpeechRecognition==3.10.4
